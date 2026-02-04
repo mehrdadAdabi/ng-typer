@@ -1,0 +1,10 @@
+/dist
+node_modules
+.angular/
+# کش سیستم‌عامل‌ها
+.DS_Store (برای مک)
+Thumbs.db (برای ویندوز)
+
+# لاگ‌های خطا
+npm-debug.log*
+yarn-error.log*
