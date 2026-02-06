@@ -1,63 +1,111 @@
-# NetworkStatus
+# Network Status Library
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.1.0.
+An Angular library for detecting and managing online/offline status with built-in directives and services.
 
-## Code scaffolding
+## Features
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+- **NetworkStatusService**: RxJS Observable and Angular Signal-based online/offline detection
+- **NetworkStatusDirective**: Standalone directive to disable/enable elements based on connection status
+- **Reactive**: Built with RxJS and Angular's modern signal API
+- **Standalone**: Fully standalone components and directives (Angular 14+)
+- **Provided at root**: Service is automatically available application-wide
+
+## Installation
 
 ```bash
-ng generate component component-name
+npm install network-status
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## Usage
 
-```bash
-ng generate --help
+### NetworkStatusService
+
+Inject and use the service to monitor network connectivity:
+
+```typescript
+import { Component, effect, inject } from '@angular/core';
+import { NetworkStatusService } from 'network-status';
+
+@Component({
+  selector: 'app-status',
+  template: `
+    <p>Online: {{ isOnline() }}</p>
+  `,
+})
+export class StatusComponent {
+  networkService = inject(NetworkStatusService);
+  
+  // Access as Signal
+  isOnline = this.networkService.isOnline;
+  
+  // Or subscribe to Observable
+  constructor() {
+    effect(() => {
+      console.log('Connection status:', this.isOnline());
+    });
+  }
+}
 ```
+
+#### API
+
+**`NetworkStatusService`**
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `online$` | `Observable<boolean>` | Observable stream of online/offline status |
+| `isOnline` | `Signal<boolean>` | Angular signal containing current online status |
+
+### NetworkStatusDirective
+
+Use the `libNetworkStatus` directive to automatically disable/enable elements based on connection:
+
+```typescript
+import { Component } from '@angular/core';
+import { NetworkStatusDirective } from 'network-status';
+
+@Component({
+  selector: 'app-button',
+  imports: [NetworkStatusDirective],
+  template: `
+    <button libNetworkStatus>
+      Submit (disabled when offline)
+    </button>
+  `,
+})
+export class ButtonComponent {}
+```
+
+The directive sets the `disabled` attribute on elements when the connection is lost and removes it when online.
 
 ## Building
 
-To build the library, run:
+Build the library:
 
 ```bash
-ng build network-status
+npm run build -- network-status
 ```
 
-This command will compile your project, and the build artifacts will be placed in the `dist/` directory.
+Output is generated in `dist/network-status/`.
 
-### Publishing the Library
+## Testing
 
-Once the project is built, you can publish your library by following these steps:
-
-1. Navigate to the `dist` directory:
-   ```bash
-   cd dist/network-status
-   ```
-
-2. Run the `npm publish` command to publish your library to the npm registry:
-   ```bash
-   npm publish
-   ```
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+Run unit tests:
 
 ```bash
-ng test
+npm test -- --project=network-status
 ```
 
-## Running end-to-end tests
+## Architecture
 
-For end-to-end (e2e) testing, run:
+- **Service**: Monitors browser `online` and `offline` events via `window` and exposes status through Observable and Signal
+- **Directive**: Standalone, DI-enabled directive that subscribes to the service and applies disabled attribute logic
+- **Public API**: All exports routed through `src/public-api.ts`
 
-```bash
-ng e2e
-```
+## Browser Compatibility
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Works with all modern browsers that support:
+- `navigator.onLine`
+- `window.online`/`window.offline` events
+- RxJS 7.8+
+- Angular 21.1+
