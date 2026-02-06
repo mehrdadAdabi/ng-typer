@@ -95,6 +95,32 @@
           }
         }
       }
+    },
+    "network-status": {
+      "projectType": "library",
+      "root": "projects/network-status",
+      "sourceRoot": "projects/network-status/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:ng-packagr",
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/network-status/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/network-status/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular/build:unit-test",
+          "options": {
+            "tsConfig": "projects/network-status/tsconfig.spec.json"
+          }
+        }
+      }
     }
   }
 }
